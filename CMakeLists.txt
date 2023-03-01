@@ -10,6 +10,8 @@ set(PROJECT_VERSION_MAJOR 0)
 set(PROJECT_VERSION_MINOR 1)
 set(PROJECT_VERSION_PATCH 0)
 set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+add_compile_options(-fstack-protector-strong)
+link_libraries(-fstack-protector-strong)
 
 message("Project ${PROJECT_NAME}: Version ${PROJECT_VERSION}")
 project (${PROJECT_NAME} VERSION ${PROJECT_VERSION})
