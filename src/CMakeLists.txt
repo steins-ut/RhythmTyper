@@ -1,0 +1,7 @@
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 SDL2main SDL2_image SDL2_mixer SDL2_ttf)
+target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_SOURCE_DIR}/include
+													${SDL2_MIXER_SOURCE_DIR}/include
+													${SDL2_IMAGE_SOURCE_DIR}
+													${SDL2_TTF_SOURCE_DIR})
