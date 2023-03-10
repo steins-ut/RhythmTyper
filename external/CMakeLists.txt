@@ -47,4 +47,5 @@ FetchContent_Declare(
 
 message("Setting up SDL and auxiliary libraries...")
 FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf)
+
 message("External dependencies are set up.")
