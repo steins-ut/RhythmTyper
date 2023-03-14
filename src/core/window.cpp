@@ -17,7 +17,7 @@ namespace rhythm_typer {
 			}
 
 			renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_ACCELERATED);
-			if (window_ == NULL) {
+			if (renderer_ == NULL) {
 				std::cout << "SDL renderer creation failed: " << std::endl << SDL_GetError();
 				return false;
 			}

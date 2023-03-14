@@ -76,6 +76,8 @@ namespace rhythm_typer {
 
 			//Returns a reference to the window object.
 			inline RTWindow& GetWindow() { return window_; }
+
+			inline void Stop() { running_ = false; }
 		private:
 			RTGame() :
 				window_{ "Rhythm Typer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 720, (SDL_WindowFlags)0 },
