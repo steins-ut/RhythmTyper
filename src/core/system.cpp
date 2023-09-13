@@ -1,4 +1,4 @@
-#include <system.h>
+#include <core/system.h>
 
 namespace rhythm_typer {
 	namespace core {

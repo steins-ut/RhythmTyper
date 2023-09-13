@@ -1,9 +1,11 @@
 #include <cstdint>
+#include <chrono>
+#include <type_traits>
 #include <vector>
 #include <iostream>
-#include <window.h>
+#include <core/window.h>
 
-#include <game.h>
+#include <core/game.h>
 
 namespace rhythm_typer {
 	namespace core {
@@ -12,9 +14,9 @@ namespace rhythm_typer {
 				std::cout << "Could not initialize game window." << std::endl;
 				return false;
 			}
-			for (int i = 0; i < MAX_SYSTEM_COUNT; i++) {
-				if (system_bitset_[i]) {
-					if (!systems_[i]->Initialize()) {
+			for (auto s : systems_) {
+				if (s != NULL) {
+					if (!s->Initialize()) {
 						return false;
 					}
 				}
@@ -25,27 +27,33 @@ namespace rhythm_typer {
 
 		void RTGame::Start() {
 			if (initialized_) {
-				for (int i = 0; i < MAX_SYSTEM_COUNT; i++) {
-					if (system_bitset_[i]) {
-						systems_[i]->Start();
+				using GameClock = std::conditional <std::chrono::high_resolution_clock::is_steady,
+					std::chrono::high_resolution_clock, std::chrono::steady_clock>::type;
+
+				GameClock::time_point frame_start = GameClock::now();
+
+				for (auto s : systems_) {
+					if (s != NULL) {
+						s->Start();
 					}
 				}
 
-				start_time = std::chrono::steady_clock::now();
-				std::chrono::steady_clock::time_point frame_start = std::chrono::steady_clock::now();
-				std::chrono::steady_clock::time_point frame_end = start_time;
-				uint64_t delta_time;
+				GameClock::time_point frame_end = GameClock::now();
+				float delta_time;
 
 				running_ = true;
 				while (running_) {
-					delta_time = (frame_end - frame_start).count();
-					frame_start = std::chrono::steady_clock::now();
-					for (int i = 0; i < MAX_SYSTEM_COUNT; i++) {
-						if (system_bitset_[i]) {
-							systems_[i]->Update(delta_time);
+					delta_time = std::chrono::duration_cast<std::chrono::nanoseconds>(frame_end - frame_start).count() / 1000000000.f;
+					frame_start = GameClock::now();
+					for (auto system : systems_) {
+						if (!running_) {
+							break;
+						}
+						if (system != NULL) {
+							system->Update(delta_time);
 						}
 					}
-					frame_end = std::chrono::steady_clock::now();
+					frame_end = GameClock::now();
 				}
 			}
 			else

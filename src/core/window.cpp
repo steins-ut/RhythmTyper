@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "window.h"
+#include <core/window.h>
 
 namespace rhythm_typer {
 	namespace core {

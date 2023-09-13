@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include <chrono>
-#include <system.h>
+#include <core/system.h>
 
 namespace rhythm_typer {
 	namespace debug {
@@ -13,12 +13,12 @@ namespace rhythm_typer {
 			{ };
 
 			void Start() {};
-			void Update(uint64_t delta_time);
+			void Update(float delta_time);
 
 			~DebugSystem() {};
 		private:
-			uint64_t frame_count;
-			uint64_t elapsed_time;
+			long long frame_count;
+			float elapsed_time;
 		};
 	}
 }

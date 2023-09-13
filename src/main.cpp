@@ -1,9 +1,9 @@
 #include <iostream>
-#include <game.h>
-#include <event_system.h>
+#include <core/game.h>
+#include <event/event_system.h>
 
 #ifndef NDEBUG
-#include <debug_system.h>
+#include <debug/debug_system.h>
 #endif
 
 extern "C"
@@ -16,7 +16,7 @@ using namespace rhythm_typer::core;
 using namespace rhythm_typer::event;
 
 void HandleQuit(EventSystem& system, SDL_Event evt) {
-	std::cout << "Quitting... Timestamp: " << std::endl;
+	std::cout << "Quitting..." << std::endl;
 	system.CancelEvent();
 	RTGame::GetInstance().Stop();
 }

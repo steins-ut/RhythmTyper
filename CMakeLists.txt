@@ -30,6 +30,7 @@ endif()
 add_subdirectory("external")
 add_subdirectory("src")
 
-
+set_property(TARGET ${PROJECT_NAME} PROPERTY CMAKE_CXX_EXTENSIONS OFF)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 # TODO: Add tests and install targets if needed.

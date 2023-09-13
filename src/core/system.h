@@ -19,8 +19,8 @@ namespace rhythm_typer {
 			virtual void Start() = 0;
 
 			//Will be called every frame in the game loop.
-			//Argument delta_time is in nanoseconds.
-			virtual void Update(uint64_t delta_time) = 0;
+			//Argument delta_time is in seconds.
+			virtual void Update(float delta_time) = 0;
 
 			virtual ~ISystem() = 0;
 		};

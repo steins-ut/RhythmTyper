@@ -13,5 +13,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_SOURCE_DIR}/include
 													${SDL2_MIXER_SOURCE_DIR}/include
 													${SDL2_IMAGE_SOURCE_DIR}
 													${SDL2_TTF_SOURCE_DIR}
-													"core"
-													"event")
+													"./")

@@ -5,76 +5,58 @@
 #include <unordered_map>
 #include <SDL.h>
 
-#include "event_system.h"
+#include <event/event_system.h>
 
 namespace rhythm_typer {
 	namespace event {
-		void EventSystem::Update(std::uint64_t delta_time)
+		void EventSystem::Update(float delta_time)
 		{
-			SDL_Event evt;
-			while (SDL_PollEvent(&evt) > 0) {
+			SDL_Event event;
+			while (SDL_PollEvent(&event) > 0) {
 				event_cancelled_ = false;
-				auto it = handlers_.find(evt.type);
+				auto it = handlers_.find(event.type);
 				if (it == handlers_.end()) {
-					return;
+					continue;
 				}
-				std::vector<EventHandler> evt_handlers = it->second;
-				std::vector<bool> once_list = handlers_once_[evt.type];
-				for (std::size_t i = 0; i < evt_handlers.size(); i++) {
+				std::vector<EventHandler>& event_handlers = it->second;
+				std::vector<bool>& once_list = handlers_once_[event.type];
+				for (std::size_t i = 0; i < event_handlers.size(); i++) {
 					if (!event_cancelled_) {
-						evt_handlers[i](*this, evt);
+						event_handlers[i](*this, event);
+						if (once_list[i]) {
+							event_handlers.erase(event_handlers.begin() + i);
+							once_list.erase(once_list.begin() + i);
+							i--;
+						}
 					}
-					if (once_list[i]) {
-						evt_handlers.erase(evt_handlers.begin() + i);
-						once_list.erase(once_list.begin() + i);
-						i--;
-					}
+				}
+				if (event.type >= SDL_USEREVENT && event.type < SDL_LASTEVENT) {
+					delete event.user.data1;
 				}
 			}
 		}
 
-		std::uint32_t EventSystem::RegisterHandler(SDL_EventType type, EventHandler handler, bool once)
+		void EventSystem::RegisterHandler(SDL_EventType event_type, EventHandler handler, bool once)
 		{
-			if (handlers_.count(type) == 0) {
-				handlers_[type] = std::vector<EventHandler>();
-				handlers_once_[type] = std::vector<bool>();
+			if (handlers_.count(event_type) == 0) {
+				handlers_[event_type] = std::vector<EventHandler>();
+				handlers_once_[event_type] = std::vector<bool>();
 			}
-			handlers_[type].push_back(handler);
-			handlers_once_[type].push_back(once);
-			return handlers_[type].size() - 1;
+			handlers_[event_type].push_back(handler);
+			handlers_once_[event_type].push_back(once);
 		}
 
-		template <typename T>
-		std::uint32_t EventSystem::RegisterHandler(EventHandler handler, bool once) {
-			std::uint32_t type = GetCustomEventId<T>();
-			if (handlers_.count(type) == 0) {
-				handlers_[type] = std::vector<EventHandler>();
-				handlers_once_[type] = std::vector<bool>();
-			}
-			handlers_[type].push_back(handler);
-			handlers_once_[type].push_back(once);
-			return handlers_[type].size() - 1;
-		}
-
-		template<typename T>
-		void EventSystem::PushCustomEvent(T& t)
+		void EventSystem::RemoveEventHandler(SDL_EventType event_type, EventHandler handler)
 		{
-			std::uint32_t type = GetCustomEventId<T>();
-			SDL_Event evt;
-			SDL_zero(evt);
-			evt.type = type;
-			evt.user.data1 = &t;
-			SDL_PushEvent(evt);
-		}
+			if (handlers_.count(event_type) > 0) {
+				std::vector<EventHandler>& event_handlers = handlers_[event_type];
+				std::vector<bool>& onces = handlers_once_[event_type];
 
-		void EventSystem::RemoveEventHandler(std::uint32_t type, std::uint32_t id)
-		{
-			if (handlers_.count(type) > 0) {
-				std::vector<EventHandler> evt_handlers = handlers_[type];
-				std::vector<bool> onces = handlers_once_[type];
-
-				evt_handlers.erase(evt_handlers.begin() + id);
-				onces.erase(onces.begin() + id);
+				auto it = std::find(event_handlers.begin(), event_handlers.end(), handler);
+				if (it != event_handlers.end()) {
+					event_handlers.erase(it);
+					onces.erase(onces.begin() + (it - event_handlers.begin()));
+				}
 			}
 		}
 	}
