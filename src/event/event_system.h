@@ -21,16 +21,27 @@ namespace rhythm_typer {
 				handlers_once_{}
 			{}
 
+			//Typedef for event handler function pointer
 			typedef void (*EventHandler)(EventSystem& system, SDL_Event event);
 
 			bool Initialize() { return true; }
 			void Start() {}
 			void Update(float delta_time);
 
+			//Registers an EventHandler for SDL events of type event_type
+			//If once is true, the event handler is only evoked for the first
+			//event it recieves, and is then removed automatically.
 			void RegisterHandler(SDL_EventType event_type, EventHandler handler, bool once = false);
 
+			//Registers handler for SDL_UserEvent events carrying custom data.
+			//If once is true, the event handler is only evoked for the first
+			//event it recieves, and is then removed automatically.
+			//USE NON TEMPLATED OVERRIDE FOR OTHER SDL EVENTS
 			template <typename T>
 			inline void RegisterHandler(EventHandler handler, bool once = false) {
+				static_assert(std::is_integral_v<T>, "Do not put integral types in the template."
+					"Use non templated override for SDL events.");
+
 				std::uint32_t event_type = GetCustomEventTypeId<T>();
 				if (handlers_.count(event_type) == 0) {
 					handlers_[event_type] = std::vector<EventHandler>();
@@ -41,6 +52,7 @@ namespace rhythm_typer {
 				return handlers_[event_type].size() - 1;
 			}
 
+			//Pushes an SDL_Event carrying custom data in member user.data1
 			template<typename T>
 			inline void PushCustomEvent(T t)
 			{
@@ -52,16 +64,21 @@ namespace rhythm_typer {
 				SDL_PushEvent(event);
 			}
 
+			//Cancels the current event to move on to the next one
 			inline void CancelEvent() { event_cancelled_ = true; }
 
+			//Removes EventHandler responsible for handling SDL_Event of type event_type
 			void RemoveEventHandler(SDL_EventType event_type, EventHandler handler);
 
+			//Removes EventHandler responsible for handling SDL_UserEvents carrying data
+			//of type T.
+			//USE NON TEMPLATED OVERRIDE FOR OTHER SDL EVENTS
 			template<typename T>
 			inline void RemoveEventHandler(EventHandler handler) {
 				static_assert(std::is_integral_v<T>, "Do not put integral types in the template."
-					"Use non templated override for SDL events.")
+					"Use non templated override for SDL events.");
 
-					std::uint32_t event_type = GetCustomEventTypeId<T>();
+				std::uint32_t event_type = GetCustomEventTypeId<T>();
 				if (handlers_.count(event_type) > 0) {
 					std::vector<EventHandler>& event_handlers = handlers_[event_type];
 					std::vector<bool>& onces = handlers_once_[event_type];
@@ -80,11 +97,13 @@ namespace rhythm_typer {
 			std::unordered_map<std::uint32_t, std::vector<EventHandler>> handlers_;
 			std::unordered_map<std::uint32_t, std::vector<bool>> handlers_once_;
 
+			//Gets the next event id
 			inline std::uint32_t NextEventTypeId() {
 				static std::uint32_t current_id = SDL_RegisterEvents(max_events_);
 				return current_id++;
 			};
 
+			//Gets the id for SDL_UserEvent carrying data of type T
 			template <typename T>
 			inline std::uint32_t GetCustomEventTypeId() {
 				static id = NextEventTypeId();
