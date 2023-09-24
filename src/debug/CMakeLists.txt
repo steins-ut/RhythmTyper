@@ -1,1 +1,1 @@
-target_sources(${PROJECT_NAME} PRIVATE "debug_system.cpp")
+target_sources(${GAME_LIBRARY_NAME} PRIVATE "debug_system.cpp")

@@ -14,9 +14,9 @@ namespace rhythm_typer {
 				std::cout << "Could not initialize game window." << std::endl;
 				return false;
 			}
-			for (auto s : systems_) {
-				if (s != NULL) {
-					if (!s->Initialize()) {
+			for (ISystem* system : systems_) {
+				if (system) {
+					if (!system->Initialize()) {
 						return false;
 					}
 				}
@@ -32,9 +32,9 @@ namespace rhythm_typer {
 
 				GameClock::time_point frame_start = GameClock::now();
 
-				for (auto s : systems_) {
-					if (s != NULL) {
-						s->Start();
+				for (ISystem* system : systems_) {
+					if (system) {
+						system->Start();
 					}
 				}
 
@@ -45,11 +45,11 @@ namespace rhythm_typer {
 				while (running_) {
 					delta_time = std::chrono::duration_cast<std::chrono::nanoseconds>(frame_end - frame_start).count() / 1000000000.f;
 					frame_start = GameClock::now();
-					for (auto system : systems_) {
+					for (ISystem* system : systems_) {
 						if (!running_) {
 							break;
 						}
-						if (system != NULL) {
+						if (system) {
 							system->Update(delta_time);
 						}
 					}

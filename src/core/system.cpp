@@ -6,6 +6,6 @@ namespace rhythm_typer {
 			return true;
 		}
 
-		ISystem::~ISystem() {}
+		ISystem::~ISystem() = default;
 	}
 }

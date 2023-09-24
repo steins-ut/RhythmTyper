@@ -6,18 +6,20 @@
 #include <debug/debug_system.h>
 #endif
 
+#ifdef WIN32
 extern "C"
 {
 	__declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
 	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
+#endif
 
 using namespace rhythm_typer::core;
 using namespace rhythm_typer::event;
 
-void HandleQuit(EventSystem& system, SDL_Event evt) {
+void HandleQuit(EventInfo& event_info, SDL_Event event) {
 	std::cout << "Quitting..." << std::endl;
-	system.CancelEvent();
+	event_info.SetCancelled(true);
 	RTGame::GetInstance().Stop();
 }
 

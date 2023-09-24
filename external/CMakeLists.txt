@@ -45,7 +45,17 @@ FetchContent_Declare(
 	SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/SDL2_ttf
 )
 
+FetchContent_Declare(
+	Catch2
+	GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+	GIT_TAG v3.4.0
+	SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/Catch2
+)
+list(APPEND CMAKE_MODULE_PATH ${Catch2_SOURCE_DIR}/extras)
+
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" PARENT_SCOPE)
+
 message("Setting up SDL and auxiliary libraries...")
-FetchContent_MakeAvailable(SDL2 SDL2_image SDL2_mixer SDL2_ttf)
+FetchContent_MakeAvailable(Catch2 SDL2 SDL2_image SDL2_mixer SDL2_ttf)
 
 message("External dependencies are set up.")

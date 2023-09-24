@@ -42,7 +42,7 @@ namespace rhythm_typer {
 			//Returns true if game has an instance of system T.
 			template <typename T>
 			inline bool HasSystem() {
-				return systems_[GetSystemId<T>()] != NULL;
+				return systems_[GetSystemId<T>()] != nullptr;
 			}
 
 			//Returns the instance of system T if there is one.
@@ -50,7 +50,7 @@ namespace rhythm_typer {
 			inline T& GetSystem() {
 				//Check if system exists
 				assert(HasSystem<T>());
-				return systems_[GetSystemId<T>()];
+				return *static_cast<T*>(systems_[GetSystemId<T>()]);
 			}
 
 			//Removes system T if there is one.
@@ -59,7 +59,7 @@ namespace rhythm_typer {
 				//Check if system exists
 				assert(HasSystem<T>());
 				delete systems_[GetSystemId<T>()];
-				systems_[GetSystemId<T>()] = NULL;
+				systems_[GetSystemId<T>()] = nullptr;
 			}
 
 			//Initializes the game and it's systems. Returns true
@@ -80,7 +80,7 @@ namespace rhythm_typer {
 			inline void Stop() { running_ = false; }
 		private:
 			RTWindow window_;
-			std::array<ISystem*, RT_MAX_SYSTEM_COUNT> systems_ = { NULL };
+			std::array<ISystem*, RT_MAX_SYSTEM_COUNT> systems_;
 			bool initialized_;
 			bool running_;
 
@@ -94,6 +94,7 @@ namespace rhythm_typer {
 			//Gets the next system id.
 			inline static std::uint32_t NextSystemId() {
 				static std::uint32_t current_id = 0;
+				assert(current_id < RT_MAX_SYSTEM_COUNT);
 				return current_id++;
 			}
 

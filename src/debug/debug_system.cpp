@@ -5,8 +5,6 @@
 
 #include <debug/debug_system.h>
 
-using namespace rhythm_typer::core;
-
 namespace rhythm_typer {
 	namespace debug {
 		void DebugSystem::Update(float delta_time) {
