@@ -1,4 +1,4 @@
-set(PROJECT_NAME RhythmTyperTests)
+set(PROJECT_NAME "RhythmTyperTests")
 set(TEST_TARGET_NAME "test_rhythm_typer")
 project(${PROJECT_NAME} VERSION ${PROJECT_VERSION})
 
@@ -8,7 +8,7 @@ if(WIN32)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 endif()
 
-add_executable(${TEST_TARGET_NAME} "event_tests.cpp")
+add_executable(${TEST_TARGET_NAME} "event_tests.cpp" "space_tests.cpp")
 target_link_libraries(${TEST_TARGET_NAME} PRIVATE Catch2::Catch2WithMain ${GAME_LIBRARY_NAME})
 target_include_directories(${TEST_TARGET_NAME} PRIVATE ${Catch2_SOURCE_DIR}/src
 													${SDL2_SOURCE_DIR}/include

@@ -1,24 +1,23 @@
-#ifndef _RTDEBUG_SYSTEM_H_
-#define _RTDEBUG_SYSTEM_H_
+#ifndef RTDEBUG_SYSTEM_H_
+#define RTDEBUG_SYSTEM_H_
 
-#include <cstdint>
-#include <chrono>
+#include <vector>
 #include <core/system.h>
+#include <graphic/render_system.h>
 
 namespace rhythm_typer {
 	namespace debug {
 		class DebugSystem final : public core::ISystem {
 		public:
-			DebugSystem() : frame_count{}, elapsed_time{}
-			{ };
+			DebugSystem() = default;
 
-			void Start() {};
-			void Update(float delta_time);
-
-			~DebugSystem() {};
+			~DebugSystem() override = default;
 		private:
-			long long frame_count;
-			float elapsed_time;
+			long long frame_count_{ 0 };
+			float elapsed_time_{ 0 };
+			std::vector<graphic::Renderable> renderables_{};
+
+			void Update(float delta_time) override;
 		};
 	}
 }

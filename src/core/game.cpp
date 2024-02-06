@@ -1,7 +1,5 @@
-#include <cstdint>
 #include <chrono>
 #include <type_traits>
-#include <vector>
 #include <iostream>
 #include <core/window.h>
 
@@ -9,6 +7,26 @@
 
 namespace rhythm_typer {
 	namespace core {
+		RTGame::RTGame() :
+			window_{ RT_DEFAULT_WINDOW_NAME,
+					SDL_WINDOWPOS_CENTERED,
+					SDL_WINDOWPOS_CENTERED,
+					RT_DEFAULT_WINDOW_WIDTH,
+					RT_DEFAULT_WINDOW_HEIGHT,
+					static_cast<SDL_WindowFlags>(0) },
+			systems_{ },
+			initialized_{ false },
+			running_{ false }
+		{ }
+
+		RTGame& RTGame::GetInstance() noexcept {
+			static RTGame instance{};
+			return instance;
+		};
+
+		RTWindow& RTGame::GetWindow() noexcept { return window_; }
+		bool RTGame::IsRunning() const noexcept { return running_; }
+
 		bool RTGame::Initialize() {
 			if (!window_.Initialize()) {
 				std::cout << "Could not initialize game window." << std::endl;
@@ -39,11 +57,10 @@ namespace rhythm_typer {
 				}
 
 				GameClock::time_point frame_end = GameClock::now();
-				float delta_time;
 
 				running_ = true;
 				while (running_) {
-					delta_time = std::chrono::duration_cast<std::chrono::nanoseconds>(frame_end - frame_start).count() / 1000000000.f;
+					const float delta_time = std::chrono::duration_cast<std::chrono::nanoseconds>(frame_end - frame_start).count() / 1000000000.f;
 					frame_start = GameClock::now();
 					for (ISystem* system : systems_) {
 						if (!running_) {
@@ -55,9 +72,30 @@ namespace rhythm_typer {
 					}
 					frame_end = GameClock::now();
 				}
+
+				initialized_ = false;
+				for (ISystem* system : systems_)
+					delete system;
+
+				window_.Close();
 			}
 			else
 				std::cout << "Game is not initialized yet, cannot start.";
+		}
+
+		void RTGame::Stop() {
+			running_ = false;
+			initialized_ = false;
+		}
+
+		std::uint32_t RTGame::NextSystemId() noexcept {
+			static std::uint32_t current_id = 0;
+			assert(current_id < RT_MAX_SYSTEM_COUNT);
+			return current_id++;
+		}
+
+		RTGame::~RTGame() {
+			Stop();
 		}
 	}
 }

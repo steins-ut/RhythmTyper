@@ -38,6 +38,10 @@ namespace rhythm_typer {
 			}
 		}
 
+		EventHandlerId EventSystem::RegisterHandler(SDL_EventType event_type, EventHandler handler, bool once) {
+			return RegisterHandler(static_cast<std::uint32_t>(event_type), std::move(handler), once);
+		}
+
 		EventHandlerId EventSystem::RegisterHandler(std::uint32_t event_type, EventHandler handler, bool once)
 		{
 			std::vector<std::pair<EventHandler, EventHandlerId>>::iterator it;
@@ -50,13 +54,13 @@ namespace rhythm_typer {
 			else {
 				it = handlers_[event_type].end();
 				if (event_type >= SDL_USEREVENT && event_type < SDL_LASTEVENT) {
-					it--;
+					--it;
 				}
 			}
 
-			long long index = it - handlers_[event_type].begin();
+			const long long index = it - handlers_[event_type].begin();
 			EventHandlerId id{ event_type, current_handler_id++ };
-			handlers_[event_type].insert(it, std::make_pair(handler, id));
+			handlers_[event_type].insert(it, std::make_pair(std::move(handler), id));
 			handlers_once_[event_type].insert(handlers_once_[event_type].begin() + index, once);
 			handler_indices_[event_type][id] = index;
 			return id;
@@ -72,7 +76,7 @@ namespace rhythm_typer {
 
 				auto it = event_handler_indices.find(handler_id);
 				if (it != event_handler_indices.end()) {
-					std::size_t index = it->second;
+					const std::size_t index = it->second;
 					event_handler_indices.erase(it);
 					event_handlers.erase(event_handlers.begin() + index);
 					event_handler_onces.erase(event_handler_onces.begin() + index);
@@ -82,7 +86,14 @@ namespace rhythm_typer {
 			}
 		}
 
-		void EventSystem::DecrementIndices(std::uint32_t event_type, std::size_t removed_index)
+		std::uint32_t EventSystem::NextEventTypeId() const {
+			static std::uint32_t current_id = SDL_RegisterEvents(max_events_);
+			static std::uint32_t first_id = current_id;
+			assert((current_id < std::numeric_limits<std::uint32_t>::max()) && (current_id < first_id + max_events_));
+			return current_id++;
+		}
+
+		void EventSystem::DecrementIndices(std::uint32_t event_type, std::size_t removed_index) noexcept
 		{
 			std::unordered_map<EventHandlerId, std::size_t> event_handler_indices = handler_indices_[event_type];
 			for (auto& entry : event_handler_indices) {

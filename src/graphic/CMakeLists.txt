@@ -1,0 +1,1 @@
+target_sources(${GAME_LIBRARY_NAME} PRIVATE "render_system.cpp" "texture_wrapper.cpp" "renderable.cpp" "color.cpp")

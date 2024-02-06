@@ -1,1 +1,1 @@
-target_sources(${GAME_LIBRARY_NAME} PRIVATE "event_system.cpp")
+target_sources(${GAME_LIBRARY_NAME} PRIVATE "event_system.cpp" "event_handler.cpp")

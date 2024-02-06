@@ -1,5 +1,5 @@
-#ifndef _RTHANDLERID_H_
-#define _RTHANDLERID_H_
+#ifndef RTHANDLER_ID_H_
+#define RTHANDLER_ID_H_
 
 #include <cstdint>
 #include <functional>
@@ -9,21 +9,24 @@ namespace rhythm_typer {
 	namespace event {
 		class EventInfo {
 		public:
-			inline bool GetCancelled() const { return cancelled_; }
-			inline void SetCancelled(bool value) { cancelled_ = value; };
+			bool GetCancelled() const noexcept;
+			void SetCancelled(bool value) noexcept;
 		private:
 			bool cancelled_{ false };
 		};
 
 		class EventHandlerId {
 		public:
-			EventHandlerId(std::uint32_t event_type, long long id) : event_type_{ event_type }, id_{ id } {}
+			EventHandlerId(std::uint32_t event_type, long long id);
+			std::uint32_t GetEventType() const noexcept;
+			long long GetId() const noexcept;
 
-			std::uint32_t GetEventType() const { return event_type_; }
-			long long GetId() const { return id_; }
-
-			inline bool operator==(const EventHandlerId& other) const {
+			constexpr bool EventHandlerId::operator==(const EventHandlerId& other) const noexcept {
 				return event_type_ == other.event_type_ && id_ == other.id_;
+			}
+
+			constexpr bool EventHandlerId::operator!=(const EventHandlerId& other) const noexcept {
+				return !operator==(other);
 			}
 		private:
 			std::uint32_t event_type_;

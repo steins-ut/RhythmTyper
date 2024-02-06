@@ -1,11 +1,13 @@
 #include <functional>
 #include <SDL.h>
+#include <core/game.h>
 #include <event/event_handler.h>
 #include <event/event_system.h>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/reporters/catch_reporter_event_listener.hpp>
 #include <catch2/reporters/catch_reporter_registrars.hpp>
 
+using namespace rhythm_typer::core;
 using namespace rhythm_typer::event;
 
 bool quit = false;
@@ -22,10 +24,11 @@ class TestRunListener : public Catch::EventListenerBase {
 	}
 
 	void sectionStarting(const Catch::SectionInfo& section_info) override {
+		quit = false;
 		event_handled = false;
 		deconstructor_called = false;
-		handle_count = 0;
 		read_data = -1;
+		handle_count = 0;
 	}
 
 	void testRunEnded(const Catch::TestRunStats& test_info) override {
@@ -62,8 +65,8 @@ void HandleTestEvent(EventInfo& event_info, SDL_Event event) {
 CATCH_REGISTER_LISTENER(TestRunListener);
 
 TEST_CASE("Event Handler ID tests", "[event_system]") {
-	EventHandlerId id1{ 1, 2 };
-	EventHandlerId id2{ 1, 2 };
+	const EventHandlerId id1{ 1, 2 };
+	const EventHandlerId id2{ 1, 2 };
 
 	SECTION("Two event handler keys with identical ids have same hashes") {
 		REQUIRE(std::hash<EventHandlerId>{}(id1) == std::hash<EventHandlerId>{}(id2));
@@ -73,8 +76,8 @@ TEST_CASE("Event Handler ID tests", "[event_system]") {
 TEST_CASE("Event System tests", "[event_system]") {
 	EventSystem system{};
 
-	REQUIRE(system.Initialize());
-	system.Start();
+	REQUIRE(system.ForceInitialize());
+	system.ForceStart();
 
 	SECTION("SDL Events are handled correctly.") {
 		system.RegisterHandler(SDL_QUIT, HandleQuit, false);
@@ -86,7 +89,7 @@ TEST_CASE("Event System tests", "[event_system]") {
 		event.quit.timestamp = SDL_GetTicks();
 		REQUIRE(SDL_PushEvent(&event));
 
-		system.Update(0);
+		system.ForceUpdate(0);
 		REQUIRE(quit);
 	}
 
@@ -94,7 +97,7 @@ TEST_CASE("Event System tests", "[event_system]") {
 		system.RegisterHandler<TestEvent>(HandleTestEvent, false);
 
 		system.PushCustomEvent(TestEvent{ 1 });
-		system.Update(0);
+		system.ForceUpdate(0);
 
 		REQUIRE(event_handled);
 		REQUIRE(read_data == 1);
@@ -105,13 +108,13 @@ TEST_CASE("Event System tests", "[event_system]") {
 		EventHandlerId event_handler_id = system.RegisterHandler<TestEvent>(HandleTestEvent, false);
 
 		system.PushCustomEvent(TestEvent{ 1 });
-		system.Update(0);
+		system.ForceUpdate(0);
 		system.PushCustomEvent(TestEvent{ 1 });
-		system.Update(0);
+		system.ForceUpdate(0);
 
 		system.RemoveHandler(event_handler_id);
 		system.PushCustomEvent(TestEvent{ 1 });
-		system.Update(0);
+		system.ForceUpdate(0);
 
 		REQUIRE(handle_count == 2);
 	}
@@ -120,9 +123,9 @@ TEST_CASE("Event System tests", "[event_system]") {
 		system.RegisterHandler<TestEvent>(HandleTestEvent, true);
 
 		system.PushCustomEvent(TestEvent{ 1 });
-		system.Update(0);
+		system.ForceUpdate(0);
 		system.PushCustomEvent(TestEvent{ 1 });
-		system.Update(0);
+		system.ForceUpdate(0);
 
 		REQUIRE(handle_count == 1);
 	}

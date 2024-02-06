@@ -8,10 +8,12 @@ add_library(${GAME_LIBRARY_NAME} STATIC)
 
 add_subdirectory("core")
 add_subdirectory("event")
-
+add_subdirectory("ui")
+add_subdirectory("graphic")
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-add_subdirectory("debug")
+	add_subdirectory("debug")
 	target_include_directories(${GAME_EXECUTABLE_NAME} PRIVATE "debug")
+	target_include_directories(${GAME_LIBRARY_NAME} PRIVATE "debug")
 endif()
 
 target_include_directories(${GAME_LIBRARY_NAME} PRIVATE ${SDL2_SOURCE_DIR}/include

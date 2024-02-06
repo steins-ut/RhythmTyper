@@ -1,6 +1,8 @@
 #include <iostream>
 #include <core/game.h>
+#include <event/event_handler.h>
 #include <event/event_system.h>
+#include <graphic/render_system.h>
 
 #ifndef NDEBUG
 #include <debug/debug_system.h>
@@ -16,6 +18,7 @@ extern "C"
 
 using namespace rhythm_typer::core;
 using namespace rhythm_typer::event;
+using namespace rhythm_typer::graphic;
 
 void HandleQuit(EventInfo& event_info, SDL_Event event) {
 	std::cout << "Quitting..." << std::endl;
@@ -23,14 +26,14 @@ void HandleQuit(EventInfo& event_info, SDL_Event event) {
 	RTGame::GetInstance().Stop();
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	RTGame& game = RTGame::GetInstance();
 
 	EventSystem& event_system = game.AddSystem<EventSystem>();
 #ifndef NDEBUG
 	rhythm_typer::debug::DebugSystem& debug_system = game.AddSystem<rhythm_typer::debug::DebugSystem>();
 #endif // !NDEBUG
+	RenderSystem& render_system = game.AddSystem<RenderSystem>();
 
 	if (!game.Initialize()) {
 		std::cout << "Could not initialize game.";
