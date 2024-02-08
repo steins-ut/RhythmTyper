@@ -73,7 +73,6 @@ namespace rhythm_typer {
 					frame_end = GameClock::now();
 				}
 
-				initialized_ = false;
 				for (ISystem* system : systems_)
 					delete system;
 
@@ -96,6 +95,11 @@ namespace rhythm_typer {
 
 		RTGame::~RTGame() {
 			Stop();
+
+			for (ISystem* system : systems_)
+				delete system;
+
+			window_.Close();
 		}
 	}
 }

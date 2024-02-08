@@ -10,6 +10,10 @@
 
 namespace rhythm_typer {
 	namespace event {
+		EventSystem::EventSystem(std::uint32_t max_events) :
+			max_events_{ max_events }
+		{}
+
 		void EventSystem::Update(float delta_time)
 		{
 			SDL_Event event;

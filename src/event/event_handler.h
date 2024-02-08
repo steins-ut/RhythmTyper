@@ -17,6 +17,8 @@ namespace rhythm_typer {
 
 		class EventHandlerId {
 		public:
+			using id_type = int;
+
 			EventHandlerId(std::uint32_t event_type, long long id);
 			std::uint32_t GetEventType() const noexcept;
 			long long GetId() const noexcept;
@@ -30,7 +32,7 @@ namespace rhythm_typer {
 			}
 		private:
 			std::uint32_t event_type_;
-			long long id_;
+			id_type id_;
 		};
 
 		using EventHandler = std::function<void(EventInfo&, SDL_Event)>;
