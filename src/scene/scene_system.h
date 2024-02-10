@@ -7,12 +7,10 @@
 
 namespace rhythm_typer {
 	namespace scene {
-		using SceneId = int;
-
 		enum class SceneType {
 			Custom
 		};
-
+		//temporary
 		struct SceneInfo {
 			SceneType type;
 			std::string name;
@@ -27,12 +25,16 @@ namespace rhythm_typer {
 				std::enable_if_t<std::is_base_of_v<IScene, T>, bool> = true>
 			SceneId CreateScene(SceneInfo scene_info, bool auto_switch = true, TArgs&&... args);
 
-			bool SwitchScene(SceneId target_scene, bool destroy_previous_scene = true);
+			bool RequestSceneSwitch(SceneId target_scene, bool destroy_previous_scene = true);
+			bool DeleteScene(SceneId target_scene);
 
 		protected:
 			IScene* current_scene{ nullptr };
+			IScene* next_scene{ nullptr };
 			bool switching_scene_{ false };
 			std::unordered_map<SceneId, IScene*> alive_scenes_{};
+
+			void SwitchScene(SceneId target_scene);
 
 			void Update(float delta_time) override;
 		};
