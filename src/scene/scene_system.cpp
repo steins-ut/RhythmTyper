@@ -11,7 +11,7 @@ namespace rhythm_typer {
 				return false;
 			}
 
-			const auto lambda = [&, target_scene, destroy_previous_scene]() {
+			std::function<void()> lambda = [&, target_scene, destroy_previous_scene]() {
 				if(!current_scene) {
 					SwitchScene(target_scene);
 				}
@@ -57,7 +57,9 @@ namespace rhythm_typer {
 		}
 
 		void SceneSystem::Update(float delta_time) {
-			current_scene->Update();
+			if(current_scene) {
+				current_scene->Update();
+			}
 		}
 	}
 }

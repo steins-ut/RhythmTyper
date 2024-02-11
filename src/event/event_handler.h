@@ -19,7 +19,7 @@ namespace rhythm_typer {
 		public:
 			using id_type = int;
 
-			EventHandlerId(std::uint32_t event_type, long long id);
+			EventHandlerId(std::uint32_t event_type, id_type id);
 			std::uint32_t GetEventType() const noexcept;
 			long long GetId() const noexcept;
 

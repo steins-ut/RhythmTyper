@@ -77,8 +77,10 @@ namespace rhythm_typer {
 					frame_end = GameClock::now();
 				}
 
-				for (ISystem* system : systems_)
-					delete system;
+				for (int i = 0; i < systems_.size(); i++) {
+					delete systems_[i];
+					systems_[i] = nullptr;
+				}
 
 				window_.Close();
 			}

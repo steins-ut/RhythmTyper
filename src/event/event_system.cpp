@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <algorithm>
+#include <cassert>
 #include <vector>
 #include <unordered_map>
 #include <SDL.h>
