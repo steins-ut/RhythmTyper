@@ -25,16 +25,18 @@ namespace rhythm_typer {
 				std::enable_if_t<std::is_base_of_v<IScene, T>, bool> = true>
 			SceneId CreateScene(SceneInfo scene_info, bool auto_switch = true, TArgs&&... args);
 
-			bool RequestSceneSwitch(SceneId target_scene, bool destroy_previous_scene = true);
-			bool DeleteScene(SceneId target_scene);
+			bool RequestSceneSwitch(SceneId target_scene_id, bool destroy_previous_scene = true);
+			bool RequestSceneDestruction(SceneId target_scene_id);
 
 		protected:
 			IScene* current_scene{ nullptr };
 			IScene* next_scene{ nullptr };
 			bool switching_scene_{ false };
+			bool deleting_scene_{ false };
 			std::unordered_map<SceneId, IScene*> alive_scenes_{};
 
-			void SwitchScene(SceneId target_scene);
+			void SwitchScene(SceneId target_scene_id);
+			void DestroyScene(SceneId target_scene_id);
 
 			void Update(float delta_time) override;
 		};
