@@ -1,0 +1,1 @@
+target_sources(${GAME_LIBRARY_NAME} PRIVATE "scene.cpp" "scene_system.cpp")

@@ -2,8 +2,10 @@
 #define RTGAME_H_
 
 #include <array>
+#include <functional>
 #include <core/window.h>
 #include <core/system.h>
+#include <vector>
 
 #define RT_MAX_SYSTEM_COUNT 16
 #define RT_DEFAULT_WINDOW_NAME "Rhythm Typer"
@@ -46,6 +48,10 @@ namespace rhythm_typer {
 			//started and runs as long as IsRunning() returns true.
 			void Start();
 
+			//Queues the passed function to be executed in the next frame
+			//before any systems are updated.
+			void ExecuteOnNextFrame(std::function<void()> function);
+
 			//Returns true if game is running.
 			bool IsRunning() const noexcept;
 
@@ -59,9 +65,11 @@ namespace rhythm_typer {
 			RTGame& operator=(RTGame&&) = delete;
 		private:
 			RTWindow window_;
-			std::array<ISystem*, RT_MAX_SYSTEM_COUNT> systems_;
-			bool initialized_;
-			bool running_;
+			std::array<ISystem*, RT_MAX_SYSTEM_COUNT> systems_{};
+			std::vector<std::function<void()>> current_frame_actions_{};
+			std::vector<std::function<void()>> next_frame_functions_{};
+			bool initialized_{ false };
+			bool running_{ false };
 
 			RTGame();
 

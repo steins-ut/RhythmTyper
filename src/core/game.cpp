@@ -13,10 +13,7 @@ namespace rhythm_typer {
 					SDL_WINDOWPOS_CENTERED,
 					RT_DEFAULT_WINDOW_WIDTH,
 					RT_DEFAULT_WINDOW_HEIGHT,
-					static_cast<SDL_WindowFlags>(0) },
-			systems_{ },
-			initialized_{ false },
-			running_{ false }
+					static_cast<SDL_WindowFlags>(0) }
 		{ }
 
 		RTGame& RTGame::GetInstance() noexcept {
@@ -62,6 +59,13 @@ namespace rhythm_typer {
 				while (running_) {
 					const float delta_time = std::chrono::duration_cast<std::chrono::nanoseconds>(frame_end - frame_start).count() / 1000000000.f;
 					frame_start = GameClock::now();
+
+					current_frame_actions_ = next_frame_functions_;
+					next_frame_functions_.clear();
+					for(std::function<void()>& fun: current_frame_actions_) {
+						fun();
+					}
+
 					for (ISystem* system : systems_) {
 						if (!running_) {
 							break;
@@ -73,14 +77,19 @@ namespace rhythm_typer {
 					frame_end = GameClock::now();
 				}
 
-				initialized_ = false;
-				for (ISystem* system : systems_)
-					delete system;
+				for (int i = 0; i < systems_.size(); i++) {
+					delete systems_[i];
+					systems_[i] = nullptr;
+				}
 
 				window_.Close();
 			}
 			else
 				std::cout << "Game is not initialized yet, cannot start.";
+		}
+
+		void RTGame::ExecuteOnNextFrame(std::function<void()> function) {
+			next_frame_functions_.push_back(std::move(function));
 		}
 
 		void RTGame::Stop() {
@@ -96,6 +105,11 @@ namespace rhythm_typer {
 
 		RTGame::~RTGame() {
 			Stop();
+
+			for (ISystem* system : systems_)
+				delete system;
+
+			window_.Close();
 		}
 	}
 }

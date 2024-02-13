@@ -2,8 +2,6 @@
 #define RTEVENT_SYSTEM_H_
 
 #include <cstdint>
-#include <cassert>
-#include <type_traits>
 #include <vector>
 #include <map>
 #include <unordered_map>
@@ -18,9 +16,7 @@ namespace rhythm_typer {
 	namespace event {
 		class EventSystem final : public core::ISystem {
 		public:
-			EventSystem(std::uint32_t max_events = RT_MAX_EVENTS) :
-				max_events_{ max_events }
-			{}
+			EventSystem(std::uint32_t max_events = RT_MAX_EVENTS);
 
 			//Registers an EventHandler for SDL events of type event_type
 			//If once is true, the event handler is only evoked for the first
@@ -42,11 +38,11 @@ namespace rhythm_typer {
 
 			~EventSystem() override = default;
 		private:
-			std::uint32_t max_events_{};
+			std::uint32_t max_events_{ 0 };
 			std::unordered_map<std::uint32_t, std::vector<std::pair<EventHandler, EventHandlerId>>> handlers_{};
 			std::unordered_map<std::uint32_t, std::vector<bool>> handlers_once_{};
 			std::unordered_map<std::uint32_t, std::unordered_map<EventHandlerId, std::size_t>> handler_indices_{};
-			long long current_handler_id{};
+			EventHandlerId::id_type current_handler_id{ 0 };
 
 			//Gets the next event type id
 			std::uint32_t NextEventTypeId() const;
@@ -72,4 +68,5 @@ namespace rhythm_typer {
 }
 
 #include <event/event_system.tcc>
+
 #endif
