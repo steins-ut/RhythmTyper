@@ -14,7 +14,7 @@ namespace rhythm_typer {
 		const std::string& IScene::GetInstanceName() const noexcept { return instance_name_; }
 
 		void IScene::Start() {}
-		void IScene::Update() {}
+		void IScene::Update(float delta_time) {}
 
 		void IScene::OnSwitch(IScene& new_scene) {}
 

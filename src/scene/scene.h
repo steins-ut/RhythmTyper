@@ -32,7 +32,7 @@ namespace rhythm_typer {
 			void SetName(std::string name);
 
 			virtual void Start();
-			virtual void Update();
+			virtual void Update(float delta_time);
 
 			virtual void OnSwitch(IScene& new_scene);
 

@@ -72,7 +72,7 @@ namespace rhythm_typer {
 
 		void SceneSystem::Update(float delta_time) {
 			if (current_scene) {
-				current_scene->Update();
+				current_scene->Update(delta_time);
 			}
 		}
 	}
