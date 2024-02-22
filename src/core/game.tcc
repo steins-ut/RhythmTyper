@@ -36,12 +36,18 @@ namespace rhythm_typer {
 		}
 
 		template <typename T>
-		void RTGame::RemoveSystem() {
-			//Check if system exists
+		void RTGame::RequestSystemRemoval() {
 			assert(HasSystem<T>());
-			delete systems_[GetSystemId<T>()];
-			systems_[GetSystemId<T>()] = nullptr;
+			delete_list_[GetSystemId<T>()] = true;
 		}
+
+		//template <typename T>
+		//void RTGame::RemoveSystem() {
+		//	//Check if system exists
+		//	assert(HasSystem<T>());
+		//	delete systems_[GetSystemId<T>()];
+		//	systems_[GetSystemId<T>()] = nullptr;
+		//}
 
 		template <typename T>
 		std::uint32_t RTGame::GetSystemId() noexcept {

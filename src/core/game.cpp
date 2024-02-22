@@ -66,6 +66,13 @@ namespace rhythm_typer {
 						fun();
 					}
 
+					for(int i = 0; i < delete_list_.size(); i++) {
+						if(delete_list_[i]) {
+							delete systems_[i];
+							systems_[i] = nullptr;
+						}
+					}
+
 					for (ISystem* system : systems_) {
 						if (!running_) {
 							break;

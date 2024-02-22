@@ -36,9 +36,12 @@ namespace rhythm_typer {
 			template <typename T>
 			T& GetSystem();
 
-			//Removes system T if there is one.
 			template <typename T>
-			void RemoveSystem();
+			void RequestSystemRemoval();
+
+			//Removes system T if there is one.
+			//template <typename T>
+			//void RemoveSystem();
 
 			//Initializes the game and it's systems. Returns true
 			//if there are no errors, false if there are.
@@ -66,6 +69,7 @@ namespace rhythm_typer {
 		private:
 			RTWindow window_;
 			std::array<ISystem*, RT_MAX_SYSTEM_COUNT> systems_{};
+			std::array<bool, RT_MAX_SYSTEM_COUNT> delete_list_{};
 			std::vector<std::function<void()>> current_frame_actions_{};
 			std::vector<std::function<void()>> next_frame_functions_{};
 			bool initialized_{ false };

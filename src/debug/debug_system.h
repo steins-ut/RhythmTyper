@@ -13,7 +13,7 @@ namespace rhythm_typer {
 
 			~DebugSystem() override = default;
 		private:
-			long long frame_count_{ 0 };
+			int frame_count_{ 0 };
 			float elapsed_time_{ 0 };
 			std::vector<graphic::Renderable> renderables_{};
 
